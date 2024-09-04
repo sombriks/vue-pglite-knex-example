@@ -11,7 +11,7 @@ Experiment to see how knex behaves with pglite
 ## Noteworthy
 
 - PGLite must be excluded from [packaging optimization performed by vite][vite].
-- Knex needs a [small polyfill][knex] to work properly
+- Knex needs a [small polyfill][knex] to work properly.
 
 ## Vite + vue
 

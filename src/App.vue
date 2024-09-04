@@ -1,6 +1,6 @@
 <script setup>
 import ContactItem from "./ContactItem.vue";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {db} from "./database.js";
 
 const contacts = ref([])
@@ -31,9 +31,11 @@ const doDel = async (c) => {
 }
 
 onMounted(() => list())
+watch(q, () => list())
 </script>
 <template>
     <h1>Contacts</h1>
+    <input v-model="q" placeholder="search"/>
     <contact-item v-model="contact" @save="doInsert"></contact-item>
     <contact-item v-for="contact in contacts" :key="contact.id" 
     :model-value="contact" @save="doUpdate" @del="doDel"></contact-item>
