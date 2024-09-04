@@ -10,20 +10,22 @@ const q = ref('')
 const list = async () => {
     const result = await db.query(`select *
                                    from contacts
-                                   where nome ilike '%'||$1||'%' `, [q.value])
+                                   where name ilike '%'||$1||'%' `, [q.value])
     contacts.value = result.rows
 }
 
 const doInsert = async (c) => {
+    console.log(c)
     await db.query(`insert into contacts (name)
-                    values ($1)`, [c.value.name])
+                    values ($1)`, [c.name])
     await list()
 }
 
 const doUpdate = async (c) => {
-    const {name, id} = c.value
+    const {name, id} = c
     const updated = new Date()
     await db.query(`update contacts set name = $1, updated = $2 where id = $3`,[name, updated, id])
+    contact.value = {name:''}
     await list()
 }
 
