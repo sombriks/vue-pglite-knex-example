@@ -8,24 +8,25 @@ const contact = ref({name: ''})
 const q = ref('')
 
 const list = async () => {
-    const result = await db.query(`select *
-                                   from contacts
-                                   where name ilike '%'||$1||'%' `, [q.value])
-    contacts.value = result.rows
+    contacts.value = await db('contacts').whereILike('name',`%${q.value}%`)
 }
 
 const doInsert = async (c) => {
-    console.log(c)
-    await db.query(`insert into contacts (name)
-                    values ($1)`, [c.name])
+    await db('contacts').insert({name:c.name})
+    contact.value = {name:''}
     await list()
 }
 
 const doUpdate = async (c) => {
     const {name, id} = c
     const updated = new Date()
-    await db.query(`update contacts set name = $1, updated = $2 where id = $3`,[name, updated, id])
+    await db('contacts').update({name,updated}).where({id})
     contact.value = {name:''}
+    await list()
+}
+
+const doDel = async (c) => {
+    await db('contacts').del().where({id:c.id})
     await list()
 }
 
@@ -34,7 +35,8 @@ onMounted(() => list())
 <template>
     <h1>Contacts</h1>
     <contact-item v-model="contact" @save="doInsert"></contact-item>
-    <contact-item v-for="contact in contacts" :key="contact.id" :model-value="contact" @save="doUpdate"></contact-item>
+    <contact-item v-for="contact in contacts" :key="contact.id" 
+    :model-value="contact" @save="doUpdate" @del="doDel"></contact-item>
 </template>
 <style scoped>
 </style>
